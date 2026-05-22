@@ -12,8 +12,8 @@ frontend/.next
 # misc
 .DS_Store
 *.pem
-*.png
-*.json
+/*.png
+/*.json
 __pycache__
 client/__pycache__
 server/__pycache__
