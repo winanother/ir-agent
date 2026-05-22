@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>应急响应智能体 - 管理面板</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Light palette */
+  --bg:#f8fafc;
+  --bg2:#f1f5f9;
+  --surface:#ffffff;
+  --surface2:#f1f5f9;
+  --surface3:#e2e8f0;
+  /* 14% opacity borders */
+  --border:rgba(0,0,0,.14);
+  --border2:rgba(0,0,0,.08);
+  /* Text on light */
+  --text:#0f172a;
+  --text2:#64748b;
+  --text3:#94a3b8;
+  /* Red accent #ef4444 */
+  --accent:#ef4444;
+  --accent2:#dc2626;
+  --accent-glow:rgba(239,68,68,.10);
+  --accent-glow2:rgba(239,68,68,.05);
+  /* Semantic colors */
+  --green:#16a34a;
+  --green-bg:rgba(22,163,74,.08);
+  --yellow:#ca8a04;
+  --yellow-bg:rgba(202,138,4,.08);
+  --red:#ef4444;
+  --red-bg:rgba(239,68,68,.08);
+  --orange:#ea580c;
+  --orange-bg:rgba(234,88,12,.08);
+  /* Gradients & shadows (light) */
+  --gradient-accent:linear-gradient(135deg,#ef4444,#f97316);
+  --gradient-surface:none;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.10);
+  --shadow-glow:0 0 32px rgba(239,68,68,.06);
+  /* 8px radius */
+  --radius:8px;
+  --radius-lg:8px;
+  /* Glass token */
+  --glass-bg:rgba(255,255,255,.70);
+  --glass-blur:blur(16px) saturate(1.4);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,sans-serif;line-height:1.6;min-height:100vh;overflow-x:hidden;}
+body::before{display:none;}
+a{color:var(--accent2);text-decoration:none;transition:color .2s;}
+a:hover{color:#a5b4fc;text-decoration:none;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--text3);}
+
+/* Header */
+.header{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.header h1{font-size:18px;font-weight:600;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;}
+.header h1 .logo{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;border-radius:8px;
+  background:var(--gradient-accent);
+  font-size:16px;
+}
+.header h1 .title-main{color:var(--text);}
+.header h1 .title-sub{color:var(--text2);font-weight:400;font-size:14px;margin-left:4px;}
+.header .status{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);background:var(--surface2);padding:6px 14px;border-radius:999px;border:1px solid var(--border);}
+.header .dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;}
+.header .dot.off{background:var(--red);}
+
+/* Layout container */
+.layout-container{display:flex;min-height:calc(100vh - 64px);}
+
+/* Sidebar */
+.tabs{
+  display:flex;
+  flex-direction:column;
+  width:260px;
+  min-width:260px;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:24px 16px;
+  position:sticky;top:64px;
+  height:calc(100vh - 64px);
+  overflow-y:auto;
+  gap:6px;
+}
+.tab{
+  padding:14px 20px;
+  cursor:pointer;
+  color:var(--text2);
+  font-size:15px;
+  font-weight:600;
+  transition:color .2s,background .2s,border-color .2s,transform .15s;
+  letter-spacing:.02em;
+  border-left:4px solid transparent;
+  border-radius:0 var(--radius) var(--radius) 0;
+}
+.tab:hover{color:var(--text);background:var(--surface2);transform:translateX(2px);}
+.tab.active{color:var(--accent2);background:var(--accent-glow);border-left-color:var(--accent);transform:translateX(2px);}
+
+/* Main */
+.main{flex:1;min-width:0;max-width:none;padding:32px 48px;position:relative;z-index:1;display:flex;justify-content:center;align-items:center;}
+.panel{display:none;width:100%;max-width:960px;}
+.panel.active{display:block;animation:panelIn .3s ease;}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* Cards */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:24px;
+  margin-bottom:20px;
+}
+.card h2{
+  font-size:15px;
+  font-weight:600;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:var(--text);
+  letter-spacing:-.01em;
+}
+.card h2 .card-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:8px;font-size:14px;
+}
+
+/* Form */
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:11px 14px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  color:var(--text);
+  font-size:14px;
+  font-family:'Inter',sans-serif;
+  outline:none;
+  transition:border-color .2s;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  border-color:var(--accent);
+}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3);}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-group select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 22px;border-radius:var(--radius);
+  font-size:13px;font-weight:500;cursor:pointer;border:none;
+  transition:all .2s;font-family:'Inter',sans-serif;letter-spacing:.01em;
+}
+.btn-primary{background:#00a6cc;color:#fff;border:1px solid rgba(0,210,255,.35);border-radius:var(--radius);font-weight:600;letter-spacing:.05em;}
+.btn-primary:hover{transform:translateY(-1px);}
+.btn-primary:active{transform:scale(.97);}
+.btn-secondary{background:rgba(255,255,255,.58);color:var(--text2);border:1px solid var(--border);}
+.btn-secondary:hover{background:rgba(255,255,255,.82);color:var(--text);border-color:rgba(0,0,0,.14);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.btn-group{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+
+/* Upload */
+.upload-zone{
+  border:2px dashed var(--border);
+  border-radius:var(--radius-lg);
+  padding:56px 24px;
+  text-align:center;
+  cursor:pointer;
+  transition:border-color .25s;
+  position:relative;
+  background:var(--surface2);
+}
+.upload-zone:hover,.upload-zone.dragover{
+  border-color:var(--accent);
+  background:var(--surface);
+}
+.upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.upload-zone .icon{font-size:44px;margin-bottom:12px;filter:grayscale(.3);}
+.upload-zone p{color:var(--text2);font-size:14px;}
+.upload-zone .filename{color:var(--accent2);font-weight:600;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:13px;}
+
+/* Progress */
+.progress-wrap{margin-top:20px;display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+.progress-bar{width:100%;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.progress-bar .fill{
+  height:100%;
+  background:var(--gradient-accent);
+  border-radius:3px;
+  transition:width .4s ease;
+  position:relative;
+}
+.progress-bar .fill.animated::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:shimmer 1.5s infinite;}
+@keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%)}}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+.progress-step{font-size:13px;color:var(--accent2);font-weight:500;}
+.progress-pct{font-size:13px;color:var(--text2);font-weight:600;font-family:'JetBrains Mono',monospace;}
+.progress-steps{margin-top:14px;padding:0;list-style:none;columns:2;column-gap:24px;}
+.progress-steps li{font-size:12px;color:var(--text2);padding:4px 0;display:flex;align-items:center;gap:7px;break-inside:avoid;}
+.progress-steps li .icon-done{color:var(--green);font-size:11px;}
+.progress-steps li .icon-active{color:var(--accent2);animation:pulse .8s infinite alternate;}
+.progress-steps li .icon-pending{color:var(--text3);font-size:10px;}
+@keyframes pulse{from{opacity:.4;}to{opacity:1;}}
+
+/* Task table */
+.task-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;}
+.task-table th{text-align:left;padding:12px 14px;color:var(--text3);font-weight:500;border-bottom:1px solid var(--border);font-size:11px;letter-spacing:.06em;text-transform:uppercase;}
+.task-table td{padding:12px 14px;border-bottom:1px solid var(--border2);}
+.task-table tr:hover td{background:var(--surface2);}
+.task-table code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent2);background:rgba(239,68,68,.06);padding:2px 8px;border-radius:4px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:500;letter-spacing:.02em;}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;}
+.badge-completed{background:var(--green-bg);color:var(--green);}.badge-completed::before{background:var(--green);}
+.badge-analyzing{background:var(--yellow-bg);color:var(--yellow);}.badge-analyzing::before{background:var(--yellow);animation:pulse .8s infinite alternate;}
+.badge-queued{background:rgba(99,102,241,.1);color:var(--accent2);}.badge-queued::before{background:var(--accent2);}
+.badge-failed{background:var(--red-bg);color:var(--red);}.badge-failed::before{background:var(--red);}
+
+/* Stat cards */
+.result-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px;}
+.stat-card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  text-align:center;
+}
+.stat-card .num{font-size:30px;font-weight:700;font-family:'JetBrains Mono','Inter',sans-serif;letter-spacing:-.02em;}
+.stat-card .label{font-size:11px;color:var(--text3);margin-top:6px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;}
+.stat-card.critical{border-left:3px solid var(--red);}.stat-card.critical .num{color:var(--red);}
+.stat-card.high{border-left:3px solid var(--orange);}.stat-card.high .num{color:var(--orange);}
+.stat-card.medium{border-left:3px solid var(--yellow);}.stat-card.medium .num{color:var(--yellow);}
+.stat-card.low{border-left:3px solid var(--green);}.stat-card.low .num{color:var(--green);}
+
+/* Result panel */
+.result-box{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  margin-top:16px;
+  max-height:600px;
+  overflow-y:auto;
+  font-size:13px;
+  line-height:1.8;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.result-tabs{display:flex;gap:6px;margin-bottom:4px;flex-wrap:wrap;}
+.result-tabs .btn-secondary{border-radius:20px;padding:7px 16px;font-size:12px;}
+.result-tabs .btn-secondary.active-tab{background:var(--accent-glow);color:var(--accent2);border-color:var(--accent);}
+
+/* Toast */
+.toast{
+  position:fixed;top:20px;right:20px;
+  padding:14px 22px;border-radius:var(--radius);
+  font-size:13px;color:#fff;z-index:9999;
+  animation:toastIn .3s ease;
+  max-width:420px;
+  box-shadow:var(--shadow-lg);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.1);
+}
+.toast.success{background:rgba(52,211,153,.9);}
+.toast.error{background:rgba(248,113,113,.9);}
+.toast.info{background:rgba(99,102,241,.9);}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+
+/* Section label */
+.section-label{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>
+    <span class="logo">&#128737;</span>
+    <span class="title-main">应急响应智能体</span>
+    <span class="title-sub">管理面板</span>
+  </h1>
+  <div class="status">
+    <span class="dot" id="statusDot"></span>
+    <span id="statusText">连接中...</span>
+  </div>
+</div>
+
+<div class="layout-container">
+  <div class="tabs">
+    <div class="tab active" data-panel="dashboard" onclick="switchTab(this)">概览</div>
+    <div class="tab" data-panel="upload" onclick="switchTab(this)">上传分析</div>
+    <div class="tab" data-panel="tasks" onclick="switchTab(this)">任务列表</div>
+    <div class="tab" data-panel="config" onclick="switchTab(this)">配置管理</div>
+  </div>
+
+  <div class="main">
+
+  <!-- ========== 概览 ========== -->
+  <div class="panel active" id="panel-dashboard">
+    <div class="card">
+      <h2><span class="card-icon" style="background:rgba(99,102,241,.12);">&#128202;</span> 服务状态</h2>
+      <div class="result-summary">
+        <div class="stat-card"><div class="num" id="dTasks">-</div><div class="label">总任务数</div></div>
+        <div class="stat-card"><div class="num" id="dCompleted">-</div><div class="label">已完成</div></div>
+        <div class="stat-card"><div class="num" id="dAnalyzing">-</div><div class="label">分析中</div></div>
+        <div class="stat-card"><div class="num" id="dFailed">-</div><div class="label">失败</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="card-icon" style="background:rgba(139,92,246,.12);">&#9881;</span> 当前配置</h2>
+      <div class="result-summary">
+        <div class="stat-card"><div class="num" style="font-size:15px;" id="dProto">-</div><div class="label">LLM 协议</div></div>
+        <div class="stat-card"><div class="num" style="font-size:15px;" id="dModel">-</div><div class="label">模型</div></div>
+        <div class="stat-card"><div class="num" style="font-size:15px;" id="dLLM">-</div><div class="label">LLM 状态</div></div>
+        <div class="stat-card"><div class="num" style="font-size:15px;" id="dTime">-</div><div class="label">服务器时间</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 上传分析 ========== -->
+  <div class="panel" id="panel-upload">
+    <div class="card">
+      <h2><span class="card-icon" style="background:rgba(52,211,153,.12);">&#128194;</span> 上传证据文件</h2>
+      <p style="color:var(--text2);font-size:14px;margin-bottom:20px;line-height:1.7;">
+        上传客户端采集的 JSON 证据文件，服务端将自动进行威胁检测、LLM 深度分析并生成报告。
+      </p>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" accept=".json" id="fileInput" onchange="handleFile(this)">
+        <div class="icon">&#128196;</div>
+        <p>拖拽 JSON 证据文件到此处，或点击选择文件</p>
+        <div class="filename" id="fileName"></div>
+      </div>
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar"><div class="fill animated" id="progressFill" style="width:0%"></div></div>
+        <div class="progress-info">
+          <span class="progress-step" id="progressStep">准备中...</span>
+          <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+        <ul class="progress-steps" id="progressSteps"></ul>
+      </div>
+      <div class="btn-group" style="margin-top:20px;">
+        <button class="btn btn-primary" id="btnAnalyze" onclick="startAnalysis()" disabled>&#128269; 开始分析</button>
+        <button class="btn btn-secondary" id="btnClear" onclick="clearUpload()" style="display:none;">清除</button>
+      </div>
+    </div>
+
+    <!-- 分析结果 -->
+    <div class="card" id="resultCard" style="display:none;">
+      <h2><span class="card-icon" style="background:rgba(251,191,36,.12);">&#128202;</span> 分析结果</h2>
+      <div class="result-summary" id="resultSummary"></div>
+      <div class="result-tabs">
+        <button class="btn btn-secondary active-tab" onclick="showResultTab('threats');setActiveTab(this)">威胁详情</button>
+        <button class="btn btn-secondary" onclick="showResultTab('chain');setActiveTab(this)">攻击链</button>
+        <button class="btn btn-secondary" onclick="showResultTab('profile');setActiveTab(this)">攻击者画像</button>
+        <button class="btn btn-secondary" onclick="showResultTab('report');setActiveTab(this)">完整报告</button>
+      </div>
+      <div class="result-box" id="resultContent"></div>
+    </div>
+  </div>
+
+  <!-- ========== 任务列表 ========== -->
+  <div class="panel" id="panel-tasks">
+    <div class="card">
+      <h2><span class="card-icon" style="background:rgba(99,102,241,.12);">&#128203;</span> 分析任务 <button class="btn btn-secondary" onclick="loadTasks()" style="margin-left:auto;padding:6px 14px;font-size:12px;">&#128260; 刷新</button></h2>
+      <table class="task-table">
+        <thead><tr><th>任务 ID</th><th>主机名</th><th>状态</th><th>提交时间</th><th>操作</th></tr></thead>
+        <tbody id="taskBody"><tr><td colspan="5" style="text-align:center;color:var(--text2);padding:40px;">加载中...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== 配置管理 ========== -->
+  <div class="panel" id="panel-config">
+    <div class="card">
+      <h2><span class="card-icon" style="background:rgba(139,92,246,.12);">&#128295;</span> LLM 配置</h2>
+      <form onsubmit="return saveConfig(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>API 协议</label>
+            <select id="cfgProtocol" onchange="onProtocolChange()">
+              <option value="openai-completions">OpenAI Completions</option>
+              <option value="qwen">阿里云通义千问 (DashScope)</option>
+              <option value="deepseek">DeepSeek</option>
+              <option value="anthropic">Anthropic Claude</option>
+              <option value="gemini">Google Gemini</option>
+              <option value="azure-openai">Azure OpenAI</option>
+              <option value="ollama">Ollama (本地)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>模型名称</label>
+            <input type="text" id="cfgModel" placeholder="例如: qwq-plus">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>API Key</label>
+          <input type="password" id="cfgApiKey" placeholder="sk-...">
+        </div>
+        <div class="form-group">
+          <label>API URL（留空使用默认值）</label>
+          <input type="text" id="cfgApiUrl" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>系统提示词</label>
+          <textarea id="cfgPrompt" rows="3"></textarea>
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="btn btn-primary">&#128190; 保存配置</button>
+          <button type="button" class="btn btn-secondary" onclick="loadConfig()">&#128260; 重新加载</button>
+          <button type="button" class="btn btn-secondary" onclick="testLLM()">&#9889; 测试连接</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  </div>
+
+</div>
+
+<script>
+const API_BASE = window.__API_BASE__ || '';
+
+/* ── 分析步骤定义（用于进度条展示） ── */
+const ANALYSIS_STEPS = [
+  {key:'initializing',       label:'初始化分析引擎'},
+  {key:'detect_shadow_accounts', label:'检测影子账户'},
+  {key:'detect_processes',   label:'检测可疑进程'},
+  {key:'detect_cron',        label:'检测恶意计划任务'},
+  {key:'detect_network',     label:'检测可疑网络连接'},
+  {key:'detect_auth',        label:'分析认证日志'},
+  {key:'detect_files',       label:'检测文件系统指标'},
+  {key:'detect_windows',     label:'检测 Windows 威胁'},
+  {key:'build_chain',        label:'构建攻击链'},
+  {key:'build_profile',      label:'生成攻击者画像'},
+  {key:'llm_threats',        label:'LLM 分析威胁数据'},
+  {key:'llm_process',        label:'LLM 分析可疑进程'},
+  {key:'llm_cron',           label:'LLM 分析计划任务'},
+  {key:'llm_login',          label:'LLM 分析登录活动'},
+  {key:'llm_chain',          label:'LLM 攻击链深度还原'},
+  {key:'report_generation',  label:'生成分析报告'},
+  {key:'done',               label:'分析完成'},
+];
+
+/* ── Tab 切换 ── */
+function switchTab(el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+el.dataset.panel).classList.add('active');
+  if(el.dataset.panel==='tasks') loadTasks();
+  if(el.dataset.panel==='config') loadConfig();
+  if(el.dataset.panel==='dashboard') loadDashboard();
+}
+
+/* ── Result tab active state ── */
+function setActiveTab(el){
+  el.parentElement.querySelectorAll('.btn-secondary').forEach(b=>b.classList.remove('active-tab'));
+  el.classList.add('active-tab');
+}
+
+/* ── Toast 通知 ── */
+function toast(msg, type='info'){
+  const t=document.createElement('div');
+  t.className='toast '+type;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+/* ── API 请求封装 ── */
+async function api(path, opts={}){
+  const r=await fetch(API_BASE+path, opts);
+  if(!r.ok){
+    const e=await r.text().catch(()=>'');
+    throw new Error(e||`HTTP ${r.status}`);
+  }
+  const ct=r.headers.get('content-type')||'';
+  return ct.includes('json') ? r.json() : r.text();
+}
+
+/* ── 概览（自动刷新） ── */
+let dashboardTimer=null;
+async function loadDashboard(){
+  if(dashboardTimer) clearInterval(dashboardTimer);
+  await _refreshDashboard();
+  dashboardTimer=setInterval(_refreshDashboard, 3000);
+}
+async function _refreshDashboard(){
+  try{
+    const health=await api('/api/v1/health');
+    document.getElementById('statusDot').className='dot'+(health.llm_enabled?'':' off');
+    document.getElementById('statusText').textContent=health.llm_enabled?'LLM 已启用':'仅本地分析';
+    document.getElementById('dTasks').textContent=health.tasks_count||0;
+    document.getElementById('dTime').textContent=health.server_time?health.server_time.slice(11,19):'';
+
+    const tasks=await api('/api/v1/tasks');
+    const list=tasks.tasks||[];
+    document.getElementById('dTasks').textContent=list.length;
+    document.getElementById('dCompleted').textContent=list.filter(t=>t.status==='completed').length;
+    document.getElementById('dAnalyzing').textContent=list.filter(t=>t.status==='analyzing'||t.status==='queued').length;
+    document.getElementById('dFailed').textContent=list.filter(t=>t.status==='failed').length;
+
+    const cfg=await api('/web/api/config');
+    document.getElementById('dProto').textContent=cfg.llm_protocol||'-';
+    document.getElementById('dModel').textContent=cfg.llm_model||'-';
+    document.getElementById('dLLM').textContent=health.llm_enabled?'已启用':'未启用';
+  }catch(e){
+    document.getElementById('statusDot').className='dot off';
+    document.getElementById('statusText').textContent='连接失败';
+  }
+}
+
+/* ── 文件上传 ── */
+let selectedFile=null;
+let lastResult=null;
+let lastReport='';
+let pollTimer=null;
+
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+zone.addEventListener('drop',e=>{
+  e.preventDefault();zone.classList.remove('dragover');
+  if(e.dataTransfer.files.length) handleFileObj(e.dataTransfer.files[0]);
+});
+
+function handleFile(input){if(input.files.length) handleFileObj(input.files[0]);}
+function handleFileObj(f){
+  if(!f.name.endsWith('.json')){toast('请选择 JSON 文件','error');return;}
+  selectedFile=f;
+  document.getElementById('fileName').textContent=f.name+' ('+formatBytes(f.size)+')';
+  document.getElementById('btnAnalyze').disabled=false;
+  document.getElementById('btnClear').style.display='';
+}
+function clearUpload(){
+  selectedFile=null;lastResult=null;lastReport='';
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
+  document.getElementById('fileName').textContent='';
+  document.getElementById('btnAnalyze').disabled=true;
+  document.getElementById('btnClear').style.display='none';
+  document.getElementById('fileInput').value='';
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('progressWrap').style.display='none';
+}
+function formatBytes(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB';}
+
+/* ── 进度条渲染 ── */
+function renderProgress(progress){
+  if(!progress) return;
+  const pf=document.getElementById('progressFill');
+  const ps=document.getElementById('progressStep');
+  const pp=document.getElementById('progressPct');
+  const sl=document.getElementById('progressSteps');
+
+  pf.style.width=progress.percent+'%';
+  ps.textContent=progress.detail||'';
+  pp.textContent=progress.percent+'%';
+
+  // 渲染步骤列表
+  const currentKey=progress.step;
+  let reachedCurrent=false;
+  let html='';
+  for(const s of ANALYSIS_STEPS){
+    if(s.key===currentKey){
+      reachedCurrent=true;
+      html+=`<li><span class="icon-active">&#9656;</span> ${s.label}</li>`;
+    }else if(!reachedCurrent){
+      html+=`<li><span class="icon-done">&#10003;</span> ${s.label}</li>`;
+    }else{
+      html+=`<li><span class="icon-pending">&#9675;</span> ${s.label}</li>`;
+    }
+  }
+  sl.innerHTML=html;
+}
+
+/* ── 开始分析（异步 + 轮询） ── */
+async function startAnalysis(){
+  if(!selectedFile)return;
+  const btn=document.getElementById('btnAnalyze');
+  btn.disabled=true;btn.textContent='提交中...';
+
+  const pw=document.getElementById('progressWrap');
+  pw.style.display='block';
+  renderProgress({step:'initializing',detail:'正在上传证据文件...',percent:2});
+
+  try{
+    const text=await selectedFile.text();
+    let evidence;
+    try{evidence=JSON.parse(text);}catch(e){throw new Error('JSON 格式错误: '+e.message);}
+    renderProgress({step:'initializing',detail:'正在提交到分析引擎...',percent:5});
+
+    const data=await api('/web/api/analyze', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(evidence)
+    });
+
+    const taskId=data.task_id;
+    btn.textContent='分析中...';
+
+    // 开始轮询进度
+    pollTimer=setInterval(async()=>{
+      try{
+        const t=await api('/web/api/task/'+taskId);
+        if(t.progress) renderProgress(t.progress);
+
+        if(t.status==='completed'){
+          clearInterval(pollTimer);pollTimer=null;
+          lastResult=t.analysis;
+          lastReport=t.report_md||'';
+          const pf=document.getElementById('progressFill');
+          pf.style.width='100%';
+          pf.classList.remove('animated');
+          document.getElementById('progressStep').textContent='分析完成';
+          document.getElementById('progressPct').textContent='100%';
+          displayResult(t.analysis);
+          toast('分析完成!','success');
+          btn.disabled=false;btn.textContent='\u{1F50D} 开始分析';
+        }else if(t.status==='failed'){
+          clearInterval(pollTimer);pollTimer=null;
+          toast('分析失败: '+(t.error||'未知错误'),'error');
+          btn.disabled=false;btn.textContent='\u{1F50D} 开始分析';
+          document.getElementById('progressStep').textContent='分析失败';
+          document.getElementById('progressFill').classList.remove('animated');
+        }
+      }catch(e){/* 忽略单次轮询失败 */}
+    }, 800);
+
+  }catch(e){
+    toast('提交失败: '+e.message,'error');
+    btn.disabled=false;btn.textContent='\u{1F50D} 开始分析';
+    pw.style.display='none';
+  }
+}
+
+function displayResult(r){
+  const card=document.getElementById('resultCard');
+  card.style.display='block';
+  const s=r.summary||{};
+  document.getElementById('resultSummary').innerHTML=`
+    <div class="stat-card critical"><div class="num">${s.critical||0}</div><div class="label">严重</div></div>
+    <div class="stat-card high"><div class="num">${s.high||0}</div><div class="label">高危</div></div>
+    <div class="stat-card medium"><div class="num">${s.medium||0}</div><div class="label">中等</div></div>
+    <div class="stat-card low"><div class="num">${s.low||0}</div><div class="label">低危</div></div>`;
+  showResultTab('threats');
+}
+
+function showResultTab(tab){
+  const box=document.getElementById('resultContent');
+  if(!lastResult){box.textContent='暂无数据';return;}
+  if(tab==='threats'){
+    const threats=lastResult.threats||[];
+    if(!threats.length){box.textContent='未发现威胁';return;}
+    const sevCn={critical:'严重',high:'高危',medium:'中等',low:'低危'};
+    box.innerHTML=threats.map((t,i)=>{
+      const sev=sevCn[t.severity]||t.severity;
+      const color={critical:'var(--red)',high:'var(--orange)',medium:'var(--yellow)',low:'var(--green)'}[t.severity]||'var(--text)';
+      let details='';
+      if(t.details&&typeof t.details==='object'){
+        details=Object.entries(t.details).slice(0,4).map(([k,v])=>`  ${k}: ${String(v).slice(0,120)}`).join('\n');
+      }
+      return `<div style="margin-bottom:16px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);border-left:3px solid ${color};background:var(--surface);">
+<strong style="color:${color}">[${sev}]</strong> ${esc(t.title||'')}
+<div style="color:var(--text2);margin:6px 0;font-size:13px;">${esc(t.description||'')}</div>
+${details?'<pre style="color:var(--text2);font-size:12px;margin:6px 0;font-family:JetBrains Mono,monospace;">'+esc(details)+'</pre>':''}
+<div style="font-size:12px;color:var(--accent2);margin-top:8px;">💡 建议: ${esc(t.recommendation||'')}</div>
+</div>`;
+    }).join('');
+  }else if(tab==='chain'){
+    const chain=lastResult.attack_chain||{};
+    const phases=chain.attack_phases||[];
+    if(!phases.length){box.textContent='未生成攻击链';return;}
+    box.innerHTML='<strong style="color:var(--text);">攻击阶段 (MITRE ATT&CK):</strong>\n\n'+phases.map(p=>
+      `<div style="margin-bottom:10px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
+<strong style="color:var(--accent2);">${esc(p.phase)}</strong> — ${esc(p.name)}
+<div style="color:var(--text2);font-size:13px;margin-top:4px;">${esc(p.description)} | <span style="color:var(--orange);">${esc(p.mitre_technique||'')}</span></div></div>`
+    ).join('');
+  }else if(tab==='profile'){
+    const p=lastResult.attacker_profile||{};
+    const c=p.attacker_characteristics||{};
+    const a=p.threat_assessment||{};
+    box.innerHTML=`<strong style="color:var(--text);">攻击者画像</strong>\n
+主要攻击源 IP: ${esc(c.primary_source_ip||'无')}
+攻击频率:      ${c.attack_frequency||0} 次
+唯一来源数:    ${c.unique_sources||0}
+威胁等级:      ${esc(a.overall_threat_level||'未知')}
+攻击复杂度:    ${esc(a.attack_sophistication||'未知')}
+
+攻击模式:\n`+(p.attack_patterns||[]).map(x=>`  ${x.pattern}: ${x.count} 次`).join('\n');
+  }else if(tab==='report'){
+    box.textContent=lastReport||'报告未生成';
+  }
+}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+/* ── 任务列表（自动刷新） ── */
+let taskTimer=null;
+async function loadTasks(){
+  if(taskTimer) clearInterval(taskTimer);
+  await _refreshTasks();
+  taskTimer=setInterval(_refreshTasks, 3000);
+}
+async function _refreshTasks(){
+  try{
+    const data=await api('/api/v1/tasks');
+    const body=document.getElementById('taskBody');
+    const list=data.tasks||[];
+    if(!list.length){body.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:40px;">暂无任务</td></tr>';return;}
+    body.innerHTML=list.map(t=>{
+      const badge={completed:'badge-completed',analyzing:'badge-analyzing',queued:'badge-queued',failed:'badge-failed'}[t.status]||'';
+      const statusCn={completed:'已完成',analyzing:'分析中',queued:'排队中',failed:'失败'}[t.status]||t.status;
+      const time=t.submitted_at?t.submitted_at.replace('T',' ').slice(0,19):'';
+      const action=t.status==='completed'?`<a href="${API_BASE}/api/v1/reports/${t.task_id}" target="_blank">下载报告</a>`:'';
+      return `<tr><td><code>${t.task_id}</code></td><td>${esc(t.hostname)}</td><td><span class="badge ${badge}">${statusCn}</span></td><td>${time}</td><td>${action}</td></tr>`;
+    }).join('');
+  }catch(e){/* 静默 */}
+}
+
+/* ── 配置管理 ── */
+async function loadConfig(){
+  try{
+    const c=await api('/web/api/config');
+    document.getElementById('cfgProtocol').value=c.llm_protocol||'openai-completions';
+    document.getElementById('cfgModel').value=c.llm_model||'';
+    document.getElementById('cfgApiKey').value=c.llm_api_key||'';
+    document.getElementById('cfgApiUrl').value=c.llm_api_url||'';
+    document.getElementById('cfgPrompt').value=c.llm_system_prompt||'';
+  }catch(e){toast('加载配置失败','error');}
+}
+
+function onProtocolChange(){
+  const defaults={
+    'openai-completions':'gpt-4o',
+    'qwen':'qwen-max',
+    'deepseek':'deepseek-chat',
+    'anthropic':'claude-3-opus',
+    'gemini':'gemini-1.5-pro',
+    'azure-openai':'gpt-4o',
+    'ollama':'llama3',
+  };
+  const p=document.getElementById('cfgProtocol').value;
+  if(defaults[p]) document.getElementById('cfgModel').value=defaults[p];
+}
+
+async function saveConfig(e){
+  e.preventDefault();
+  const body={
+    llm_protocol:document.getElementById('cfgProtocol').value,
+    llm_model:document.getElementById('cfgModel').value,
+    llm_api_key:document.getElementById('cfgApiKey').value,
+    llm_api_url:document.getElementById('cfgApiUrl').value,
+    llm_system_prompt:document.getElementById('cfgPrompt').value,
+  };
+  try{
+    await api('/web/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    toast('配置已保存并重新加载','success');
+    _refreshDashboard();
+  }catch(e){toast('保存失败: '+e.message,'error');}
+}
+
+async function testLLM(){
+  toast('正在测试 LLM 连接...','info');
+  try{
+    const d=await api('/web/api/test-llm',{method:'POST'});
+    if(d.success) toast('连接成功! 响应: '+String(d.reply).slice(0,80),'success');
+    else toast('连接失败: '+d.error,'error');
+  }catch(e){toast('测试失败: '+e.message,'error');}
+}
+
+/* ── 页面离开时清理定时器 ── */
+window.addEventListener('beforeunload',()=>{
+  if(dashboardTimer) clearInterval(dashboardTimer);
+  if(taskTimer) clearInterval(taskTimer);
+  if(pollTimer) clearInterval(pollTimer);
+});
+
+/* ── 初始化 ── */
+loadDashboard();
+</script>
+</body>
+</html>

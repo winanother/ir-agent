@@ -1,0 +1,10 @@
+1:"$Sreact.fragment"
+2:I[45678,["/_next/static/chunks/0dbhjjzl8qfwv.js","/_next/static/chunks/0_yc2tbwcenzr.js"],"default"]
+3:I[96987,["/_next/static/chunks/0dbhjjzl8qfwv.js","/_next/static/chunks/0_yc2tbwcenzr.js"],"default"]
+4:I[27016,["/_next/static/chunks/0dbhjjzl8qfwv.js","/_next/static/chunks/0_yc2tbwcenzr.js"],"default"]
+5:I[18505,["/_next/static/chunks/0dbhjjzl8qfwv.js","/_next/static/chunks/0_yc2tbwcenzr.js"],"default"]
+6:I[35343,["/_next/static/chunks/0dbhjjzl8qfwv.js","/_next/static/chunks/0_yc2tbwcenzr.js"],"default"]
+7:I[97367,["/_next/static/chunks/0dbhjjzl8qfwv.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{}],["$","main",null,{"className":"flex-1","children":[["$","$L3",null,{}],["$","$L4",null,{}],["$","$L5",null,{}],["$","$L6",null,{}]]}],["$","footer",null,{"className":"mt-24 border-t border-neon-blue/20 bg-black/50","children":["$","div",null,{"className":"mx-auto flex max-w-7xl flex-col items-center gap-4 px-6 py-10 text-center lg:px-10","children":[["$","div",null,{"className":"h-px w-32 bg-gradient-to-r from-transparent via-neon-blue to-transparent"}],["$","p",null,{"className":"font-display text-sm uppercase tracking-[0.35em] text-neon-blue/80","children":"Emergency Response Agent"}],["$","p",null,{"className":"font-body text-sm text-gray-400","children":"Powered by AI · Threat Intelligence · Incident Command Interface"}]]}]}]],[["$","script","script-0",{"src":"/_next/static/chunks/0_yc2tbwcenzr.js","async":true}]],["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"KOb87ERClY2uaXAOcfMT5"}
+9:null

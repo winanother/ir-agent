@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 560" width="100%">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0.5 L9 5 L0 9.5z" fill="#888780"/>
+    </marker>
+  </defs>
+  <rect width="660" height="560" fill="#FAFAFA"/>
+
+  <text x="330" y="28" text-anchor="middle" fill="#444441" font-size="15" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">analyze_evidence() 分析流水线</text>
+
+  <!-- Entry -->
+  <rect x="170" y="44" width="320" height="32" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="330" y="65" text-anchor="middle" fill="#444441" font-size="13" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">analyze_evidence(evidence, progress_callback)</text>
+  <line x1="330" y1="76" x2="330" y2="94" stroke="#888780" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Phase 1 -->
+  <rect x="50" y="96" width="560" height="230" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="70" y="116" fill="#444441" font-size="13" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">阶段一：本地规则检测</text>
+  <text x="490" y="116" fill="#888780" font-size="11" font-family="Microsoft YaHei,PingFang SC,sans-serif">进度 12% → 50%</text>
+
+  <g font-family="Microsoft YaHei,PingFang SC,sans-serif">
+    <rect x="70" y="126" width="520" height="26" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="144" fill="#444441" font-size="12">[12%]</text>
+    <text x="135" y="144" fill="#444441" font-size="12">_detect_shadow_accounts()</text>
+    <text x="380" y="144" fill="#888780" font-size="11">→ 影子账户检测</text>
+
+    <rect x="70" y="156" width="520" height="26" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="174" fill="#444441" font-size="12">[18%]</text>
+    <text x="135" y="174" fill="#444441" font-size="12">_detect_suspicious_processes()</text>
+    <text x="380" y="174" fill="#888780" font-size="11">→ 可疑进程检测</text>
+
+    <rect x="70" y="186" width="520" height="26" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="204" fill="#444441" font-size="12">[25%]</text>
+    <text x="135" y="204" fill="#444441" font-size="12">_detect_malicious_cron()</text>
+    <text x="380" y="204" fill="#888780" font-size="11">→ 恶意计划任务检测</text>
+
+    <rect x="70" y="216" width="520" height="26" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="234" fill="#444441" font-size="12">[32%]</text>
+    <text x="135" y="234" fill="#444441" font-size="12">_detect_suspicious_network()</text>
+    <text x="380" y="234" fill="#888780" font-size="11">→ 可疑网络连接检测</text>
+
+    <rect x="70" y="246" width="520" height="26" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="264" fill="#444441" font-size="12">[38%]</text>
+    <text x="135" y="264" fill="#444441" font-size="12">_detect_auth_anomalies()</text>
+    <text x="380" y="264" fill="#888780" font-size="11">→ 认证日志异常分析</text>
+
+    <rect x="70" y="276" width="520" height="26" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="294" fill="#444441" font-size="12">[44%]</text>
+    <text x="135" y="294" fill="#444441" font-size="12">_detect_file_indicators()</text>
+    <text x="380" y="294" fill="#888780" font-size="11">→ 文件系统指标检测</text>
+  </g>
+
+  <!-- Phase 2 -->
+  <rect x="50" y="336" width="560" height="80" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="70" y="356" fill="#444441" font-size="13" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">阶段二：攻击链与画像</text>
+  <text x="490" y="356" fill="#888780" font-size="11" font-family="Microsoft YaHei,PingFang SC,sans-serif">进度 55% → 60%</text>
+
+  <g font-family="Microsoft YaHei,PingFang SC,sans-serif">
+    <rect x="70" y="366" width="520" height="22" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="382" fill="#444441" font-size="12">[55%]</text>
+    <text x="135" y="382" fill="#444441" font-size="12">_build_attack_chain()</text>
+    <text x="380" y="382" fill="#888780" font-size="11">→ ATT&CK映射 · 时间线排序</text>
+
+    <rect x="70" y="392" width="520" height="22" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="408" fill="#444441" font-size="12">[60%]</text>
+    <text x="135" y="408" fill="#444441" font-size="12">_build_attacker_profile()</text>
+    <text x="380" y="408" fill="#888780" font-size="11">→ IP聚合 · sophistication评级</text>
+  </g>
+
+  <!-- Phase 3 -->
+  <rect x="50" y="426" width="560" height="80" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="70" y="446" fill="#444441" font-size="13" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">阶段三：LLM深度分析（条件执行）</text>
+  <text x="490" y="446" fill="#888780" font-size="11" font-family="Microsoft YaHei,PingFang SC,sans-serif">进度 65% → 88%</text>
+
+  <g font-family="Microsoft YaHei,PingFang SC,sans-serif">
+    <rect x="70" y="456" width="520" height="22" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="472" fill="#444441" font-size="12">[65%]</text>
+    <text x="135" y="472" fill="#444441" font-size="12">llm.analyze_threats()</text>
+    <text x="380" y="472" fill="#888780" font-size="11">→ 威胁综合分析</text>
+
+    <rect x="70" y="482" width="520" height="22" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="85" y="498" fill="#444441" font-size="12">[72%~88%]</text>
+    <text x="170" y="498" fill="#444441" font-size="12">llm.analyze_process / analyze_cron_entry / analyze_login_activity / analyze_attack_chain</text>
+  </g>
+
+  <!-- Output -->
+  <line x1="330" y1="512" x2="330" y2="530" stroke="#888780" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="180" y="530" width="300" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="330" y="549" text-anchor="middle" fill="#444441" font-size="12" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">100% → 返回完整分析结果</text>
+</svg>

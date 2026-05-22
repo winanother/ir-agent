@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 520" width="100%">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0.5 L9 5 L0 9.5z" fill="#888780"/>
+    </marker>
+  </defs>
+  <rect width="660" height="520" fill="#FAFAFA"/>
+
+  <text x="330" y="28" text-anchor="middle" fill="#444441" font-size="15" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">LLMClient 类结构与协议分发</text>
+
+  <!-- Class header -->
+  <rect x="50" y="44" width="560" height="40" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="330" y="60" text-anchor="middle" fill="#444441" font-size="13" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">LLMClient</text>
+  <text x="330" y="78" text-anchor="middle" fill="#888780" font-size="11" font-family="Microsoft YaHei,PingFang SC,sans-serif">__init__(settings: Settings)</text>
+
+  <!-- Public methods -->
+  <rect x="50" y="84" width="560" height="120" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="70" y="104" fill="#444441" font-size="12" font-family="Microsoft YaHei,PingFang SC,sans-serif">+ chat(user_message, system_prompt) → str</text>
+  <text x="440" y="104" fill="#888780" font-size="11" font-family="Microsoft YaHei,PingFang SC,sans-serif">← 统一入口</text>
+  <text x="70" y="122" fill="#444441" font-size="12" font-family="Microsoft YaHei,PingFang SC,sans-serif">+ analyze_threats(threats_data) → str</text>
+  <text x="440" y="122" fill="#888780" font-size="11" font-family="Microsoft YaHei,PingFang SC,sans-serif">← 威胁分析</text>
+  <text x="70" y="140" fill="#444441" font-size="12" font-family="Microsoft YaHei,PingFang SC,sans-serif">+ analyze_attack_chain / analyze_process / analyze_cron_entry</text>
+  <text x="70" y="158" fill="#444441" font-size="12" font-family="Microsoft YaHei,PingFang SC,sans-serif">+ analyze_login_activity / generate_report_analysis / close()</text>
+
+  <line x1="50" y1="204" x2="610" y2="204" stroke="#B4B2A9" stroke-width="0.5"/>
+
+  <!-- Dispatch title -->
+  <rect x="50" y="204" width="560" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="330" y="223" text-anchor="middle" fill="#444441" font-size="12" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">chat() 协议分发逻辑（策略模式）</text>
+
+  <line x1="330" y1="232" x2="330" y2="248" stroke="#888780" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Protocol boxes - 2x2 grid -->
+  <g font-family="Microsoft YaHei,PingFang SC,sans-serif">
+    <!-- OpenAI compatible -->
+    <rect x="50" y="250" width="270" height="70" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+    <text x="65" y="270" fill="#444441" font-size="11" font-weight="bold">openai-completions / azure-openai</text>
+    <text x="65" y="288" fill="#444441" font-size="11">_chat_openai_compatible()</text>
+    <text x="65" y="306" fill="#888780" font-size="10">Bearer Token · temp=0.3 · max_tokens=4096</text>
+
+    <!-- Anthropic -->
+    <rect x="340" y="250" width="270" height="70" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+    <text x="355" y="270" fill="#444441" font-size="11" font-weight="bold">anthropic</text>
+    <text x="355" y="288" fill="#444441" font-size="11">_chat_anthropic()</text>
+    <text x="355" y="306" fill="#888780" font-size="10">x-api-key · anthropic-version: 2023-06-01</text>
+
+    <!-- Gemini -->
+    <rect x="50" y="328" width="270" height="70" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+    <text x="65" y="348" fill="#444441" font-size="11" font-weight="bold">gemini</text>
+    <text x="65" y="366" fill="#444441" font-size="11">_chat_gemini()</text>
+    <text x="65" y="384" fill="#888780" font-size="10">API Key URL参数 · URL模板替换{model}</text>
+
+    <!-- Ollama -->
+    <rect x="340" y="328" width="270" height="70" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+    <text x="355" y="348" fill="#444441" font-size="11" font-weight="bold">ollama</text>
+    <text x="355" y="366" fill="#444441" font-size="11">_chat_ollama()</text>
+    <text x="355" y="384" fill="#888780" font-size="10">无需API Key · stream: false · localhost:11434</text>
+  </g>
+
+  <!-- Fallback -->
+  <rect x="50" y="408" width="560" height="36" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="330" y="431" text-anchor="middle" fill="#444441" font-size="11" font-family="Microsoft YaHei,PingFang SC,sans-serif">未知协议 → 兜底: _chat_openai_compatible()  ·  兼容所有OpenAI格式的第三方API</text>
+
+  <!-- Session management -->
+  <rect x="50" y="452" width="560" height="36" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="70" y="472" fill="#888780" font-size="11" font-family="Microsoft YaHei,PingFang SC,sans-serif">_get_session() — 懒加载aiohttp会话 (timeout=120s)  ·  close() — 异步清理会话资源</text>
+
+  <!-- Footer -->
+  <line x1="50" y1="498" x2="610" y2="498" stroke="#B4B2A9" stroke-width="0.5"/>
+  <text x="65" y="514" fill="#888780" font-size="10" font-family="Microsoft YaHei,PingFang SC,sans-serif">server/llm_client.py  ·  7种协议 · 30+模型 · 策略模式</text>
+</svg>

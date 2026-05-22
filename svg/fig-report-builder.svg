@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 440" width="100%">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0.5 L9 5 L0 9.5z" fill="#888780"/>
+    </marker>
+  </defs>
+  <rect width="620" height="440" fill="#FAFAFA"/>
+
+  <text x="310" y="28" text-anchor="middle" fill="#444441" font-size="15" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">build_report() 报告生成流程</text>
+
+  <!-- Entry -->
+  <rect x="160" y="44" width="300" height="30" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="310" y="64" text-anchor="middle" fill="#444441" font-size="12" font-weight="bold" font-family="Microsoft YaHei,PingFang SC,sans-serif">build_report(evidence, analysis_result)</text>
+  <line x1="310" y1="74" x2="310" y2="90" stroke="#888780" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Sections -->
+  <g font-family="Microsoft YaHei,PingFang SC,sans-serif">
+    <rect x="60" y="92" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="111" fill="#444441" font-size="12">[1]</text>
+    <text x="105" y="111" fill="#444441" font-size="12">_header()</text>
+    <text x="300" y="111" fill="#888780" font-size="11">→ 报告元数据 (时间/主机/OS/威胁级别)</text>
+
+    <rect x="60" y="124" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="143" fill="#444441" font-size="12">[2]</text>
+    <text x="105" y="143" fill="#444441" font-size="12">_executive_summary()</text>
+    <text x="300" y="143" fill="#888780" font-size="11">→ LLM生成的安全态势总览</text>
+
+    <rect x="60" y="156" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="175" fill="#444441" font-size="12">[3]</text>
+    <text x="105" y="175" fill="#444441" font-size="12">_host_overview()</text>
+    <text x="300" y="175" fill="#888780" font-size="11">→ 系统信息/账户概况/登录用户</text>
+
+    <rect x="60" y="188" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="207" fill="#444441" font-size="12">[4]</text>
+    <text x="105" y="207" fill="#444441" font-size="12">_threat_details()</text>
+    <text x="300" y="207" fill="#888780" font-size="11">→ 威胁统计表 + 威胁详情 (≤40条)</text>
+
+    <rect x="60" y="220" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="239" fill="#444441" font-size="12">[5]</text>
+    <text x="105" y="239" fill="#444441" font-size="12">_llm_analysis_section()</text>
+    <text x="300" y="239" fill="#888780" font-size="11">→ AI深度分析 (威胁/进程/任务/登录/链)</text>
+
+    <rect x="60" y="252" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="271" fill="#444441" font-size="12">[6]</text>
+    <text x="105" y="271" fill="#444441" font-size="12">_attack_chain_section()</text>
+    <text x="300" y="271" fill="#888780" font-size="11">→ ATT&CK阶段映射表 + 时间线 (≤30条)</text>
+
+    <rect x="60" y="284" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="303" fill="#444441" font-size="12">[7]</text>
+    <text x="105" y="303" fill="#444441" font-size="12">_attacker_profile_section()</text>
+    <text x="300" y="303" fill="#888780" font-size="11">→ 来源IP/分布/威胁评估/攻击模式</text>
+
+    <rect x="60" y="316" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="335" fill="#444441" font-size="12">[8]</text>
+    <text x="105" y="335" fill="#444441" font-size="12">_ioc_section()</text>
+    <text x="300" y="335" fill="#888780" font-size="11">→ IOC指标 (IP/进程/任务/端口)</text>
+
+    <rect x="60" y="348" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="367" fill="#444441" font-size="12">[9]</text>
+    <text x="105" y="367" fill="#444441" font-size="12">_recommendations_section()</text>
+    <text x="300" y="367" fill="#888780" font-size="11">→ 分优先级处置建议 (含时间线)</text>
+
+    <rect x="60" y="380" width="500" height="28" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="75" y="399" fill="#444441" font-size="12">[10]</text>
+    <text x="110" y="399" fill="#444441" font-size="12">_appendix()</text>
+    <text x="300" y="399" fill="#888780" font-size="11">→ 采集元数据/证据哈希/免责声明</text>
+  </g>
+
+  <!-- Output -->
+  <line x1="310" y1="414" x2="310" y2="426" stroke="#888780" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="120" y="426" width="380" height="0" fill="none" stroke="none"/>
+</svg>
